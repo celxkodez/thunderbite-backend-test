@@ -40,7 +40,7 @@ class Game extends Model
         }
 
         $query->leftJoin('prizes', 'prizes.id', '=', 'games.prize_id')
-            ->select('games.id', 'account', 'prize_id', 'revealed_at', 'prizes.title')
+            ->select('games.id', 'account', 'prize_id', 'revealed_at', 'prizes.name as title')
             ->where('games.campaign_id', $campaign->id);
 
         return $query;
