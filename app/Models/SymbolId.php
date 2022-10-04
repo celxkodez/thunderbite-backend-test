@@ -15,4 +15,10 @@ class SymbolId extends Model
     {
         return asset("{$this->attributes['image_url']}");
     }
+
+    public static function search($query)
+    {
+        return empty($query) ? static::query()
+            : static::where('name', 'like', '%'.$query.'%');
+    }
 }
