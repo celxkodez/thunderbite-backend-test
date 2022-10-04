@@ -13,10 +13,9 @@
             <option>25</option>
         </select>
 
-        {{-- @if($hasSearch)
+        @if($hasSearch)
             <input wire:model="search" type="text" placeholder="Search..." class="bg-gray-100 border border-gray-300 rounded-full px-4 text-gray-400 ml-4">
-        @endif --}}
+        @endif
 
-      
     </div>
 </div>

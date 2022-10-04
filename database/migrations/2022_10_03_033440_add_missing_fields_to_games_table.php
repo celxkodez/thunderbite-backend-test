@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::table('games', function (Blueprint $table) {
             $table->timestamp('starts_at')->nullable();
             $table->timestamp('ends_at')->nullable();
+            $table->dateTime('revealed_at')->default(now())->change();
             $table->unsignedBigInteger('spin');
             $table->json('points')->nullable();
         });

@@ -27,43 +27,61 @@ class Game extends Model
         'ends_at',
     ];
 
-    public static function filter()
+    public static function filter($start_date = null, $end_date = null, array $filters = [])
     {
+        $filters = array_merge(
+            [
+                'filter1' => null,
+                'filter2' => null,
+                'filter3' => null,
+                'filter4' => null,
+            ],
+            $filters
+        );
+
         $query = self::query();
         $campaign = Campaign::find(session('activeCampaign'));
 
-        self::filterDates($query, $campaign);
+        self::filterDates($query, $campaign, $start_date, $end_date);
 
-        if ($data = request('filter1')) {
+        if ($data = $filters['filter1']) {
             $query->where('account', 'like', $data.'%');
         }
 
-        if ($data = request('filter2')) {
+        if ($data = $filters['filter2']) {
             $query->where('prize_id', $data);
         }
 
-        if ($data = request('filter3')) {
+        if ($data = $filters['filter3']) {
             $query->whereRaw('HOUR(revealed_at) >= '.$data);
         }
 
-        if ($data = request('filter4')) {
+        if ($data = $filters['filter4']) {
             $query->whereRaw('HOUR(revealed_at) <= '.$data);
         }
 
         $query->leftJoin('prizes', 'prizes.id', '=', 'games.prize_id')
-            ->select('games.id', 'account', 'prize_id', 'revealed_at', 'prizes.name as title')
+            ->select([
+                'games.id',
+                'account',
+                'prize_id',
+                'revealed_at',
+                'games.starts_at',
+                'games.ends_at',
+                'prizes.name as title'
+            ])
             ->where('games.campaign_id', $campaign->id);
 
         return $query;
     }
 
-    private static function filterDates($query, $campaign): void
+    private static function filterDates($query, $campaign, $start_date = null, $end_date = null): void
     {
-        if (($data = request('date_start')) || ($data = Carbon::now()->subDays(6))) {
+        if (($data = $start_date) || ($data = Carbon::now()->subDays(6))) {
             $data = Carbon::parse($data)->setTimezone($campaign->timezone)->toDateTimeString();
             $query->where('games.revealed_at', '>=', $data);
         }
-        if (($data = request('date_end')) || ($data = Carbon::now())) {
+        if (($data = $end_date) || ($data = Carbon::now())) {
             $data = Carbon::parse($data)->setTimezone($campaign->timezone)->toDateTimeString();
             $query->where('games.revealed_at', '<=', $data);
         }

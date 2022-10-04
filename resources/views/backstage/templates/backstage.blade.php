@@ -119,6 +119,16 @@
 
 @include('backstage.partials.support')
 
+<script>
+    document.querySelector('#export-btn').addEventListener('click', function (e) {
+        console.log('clicked')
+        const download = document.querySelector('#hidden-export')
+        if(download) {
+            download.click()
+        }
+        //@todo notify of an error
+    })
+</script>
 </body>
 
 </html>
