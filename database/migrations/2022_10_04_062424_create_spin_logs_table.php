@@ -15,6 +15,9 @@ return new class extends Migration
     {
         Schema::create('spin_logs', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('game_id');
+            $table->boolean('is_win')->default(false);
+            $table->json('points');
             $table->timestamps();
         });
     }

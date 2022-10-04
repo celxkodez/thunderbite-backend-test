@@ -10,7 +10,16 @@ class Game extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['campaign_id', 'prize_id', 'account', 'revealed_at', 'starts_at', 'ends_at', 'points'];
+    protected $fillable = [
+        'campaign_id',
+        'prize_id',
+        'account',
+        'revealed_at',
+        'starts_at',
+        'ends_at',
+        'spin',
+        'points'
+    ];
 
     protected $dates = [
         'revealed_at',

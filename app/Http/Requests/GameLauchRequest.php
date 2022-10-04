@@ -32,7 +32,6 @@ class GameLauchRequest extends FormRequest
             ->latest('created_at')
             ->first();
 
-        //dd($game);
         if (!$game) {
             $this->authorizationFailedMessage = "there is no available game for you at this moment";
             return false;

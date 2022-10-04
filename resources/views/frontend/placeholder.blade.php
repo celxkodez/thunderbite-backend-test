@@ -14,10 +14,13 @@
     @livewireStyles
 
     <style>
+        @import url(https://fonts.googleapis.com/css?family=Roboto&display=swap);
+
         html, body {
             height: 100%;
             margin: 0;
             padding: 0;
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; /* 4 */
         }
 
         body {
@@ -30,6 +33,28 @@
         #logo {
             max-width: 100%;
             width: 200px;
+        }
+
+        .notification-container {
+            align-items: center;
+            flex-direction: row;
+            padding: 5px;
+            /*display: flex;*/
+            background-color: rgba(156, 163, 175, 0.34);
+            margin-bottom: 10px;
+            border-radius: 3px 3px 3px 3px;
+            justify-content: center;
+        }
+
+        .spinBtn {
+            float: right;
+            padding: 10px 30px;
+            line-height: 1.5;
+            font-size: 22px;
+            font-weight: bolder;
+            background: hsl(11deg 80% 31%);
+            color: #fff;
+            border-radius: 8px;
         }
 
         /*table, th, td {*/

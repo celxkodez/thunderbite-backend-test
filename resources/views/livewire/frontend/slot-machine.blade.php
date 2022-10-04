@@ -1,4 +1,11 @@
 <div x-data="app()">
+    @if($errors->any())
+        <div class="notification-container" style="">
+            @foreach ($errors->all() as $error)
+                <p style="color: #f30202">{{ $error }}</p>
+            @endforeach
+        </div>
+    @endif
     <div class="row">
 {{--        <div class="col-12">--}}
 {{--            <p>Hello Welcome</p>--}}
@@ -20,7 +27,7 @@
                 <p>{{$prefix}}</p>
                 <p>Points: <span>{{$total_points}}</span></p>
 
-                <button wire:click="spin" type="button" style="float: right">Spin</button>
+                <button wire:click="spin" type="button" class="spinBtn">Spin</button>
             </div>
         </form>
     </div>

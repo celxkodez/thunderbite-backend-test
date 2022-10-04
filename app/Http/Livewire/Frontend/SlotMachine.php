@@ -2,7 +2,10 @@
 
 namespace App\Http\Livewire\Frontend;
 
+use App\Models\Game;
+use App\Models\SpinLog;
 use App\Models\SymbolId;
+use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 
 class SlotMachine extends Component
@@ -11,9 +14,12 @@ class SlotMachine extends Component
     public array $wins;
     public mixed $total_points;
     public string $prefix = '';
+    public string $account;
 
     public function mount()
     {
+        $this->account = request('a');
+
         $this->reel = $this->reel();
     }
 
@@ -26,10 +32,34 @@ class SlotMachine extends Component
     {
         $reel = $this->reel();
 
+        $game = Game::where('account', $this->account)
+            ->where('starts_at', '<=', now())
+            ->where('ends_at', '>=', now())
+            ->latest('created_at')
+            ->first();
+
+        $spinLogs = SpinLog::where('game_id', $game->id)
+            ->whereDate('created_at', now())
+            ->count();
+
+        if ($spinLogs >= (int) $game->spin) {
+            throw ValidationException::withMessages([
+                "Number Of Spin Exceeded for the day!"
+            ]);
+        }
+
         $wins = $this->findWins($reel);
-        $this->prefix = $wins['total_points'] > 0 ? 'Congrats, You Won!' : 'Sorry, You Loose!';
+        $total_points = collect($wins['points'])->sum('points');
+
+        $spinLog = SpinLog::create([
+            'game_id' => $game->id,
+            'is_win' => $total_points > 0,
+            'points' => $wins['points'],
+        ]);
+
+        $this->prefix = $total_points > 0 ? 'Congrats, You Won!' : 'Sorry, You Loose!';
         $this->wins = $wins;
-        $this->total_points = $wins['total_points'];
+        $this->total_points = $total_points;
 
         $this->reel = $reel;
     }
@@ -212,7 +242,7 @@ class SlotMachine extends Component
         $rowStreaks = [];
         $rowStreaksOrders = [];
         $rowStreaksWins = [];
-        $points = 0;
+        $points = [];
 
         foreach ($reel as $row_key => $row) {
             $rowStreaks[] = $row[0];
@@ -268,7 +298,13 @@ class SlotMachine extends Component
                 if ($fiveCombination === $orderStreak) {
                     $rowStreaksWins[] = $orderStreak;
 
-                    $points += SymbolId::select('match_point_5')->find($rowStreak)->match_point_5;
+                    $symbolId = SymbolId::find($rowStreak);
+
+                    $points[] = [
+                        'symbol_id' => $symbolId->id,
+                        'points' => $symbolId->match_point_5,
+                        'combination' => 5
+                    ];
                     break;
                 }
 
@@ -279,7 +315,13 @@ class SlotMachine extends Component
                 if ($fourCombination === $orderStreak) {
                     $rowStreaksWins[] = $orderStreak;
 
-                    $points += SymbolId::select('match_point_4')->find($rowStreak)->match_point_4;
+                    $symbolId = SymbolId::find($rowStreak);
+
+                    $points[] = [
+                        'symbol_id' => $symbolId->id,
+                        'points' => $symbolId->match_point_4,
+                        'combination' => 4
+                    ];
                     break;
                 }
 
@@ -290,8 +332,13 @@ class SlotMachine extends Component
                 if ($threeCombination === $orderStreak) {
                     $rowStreaksWins[] = $orderStreak;
 
-                    $points += SymbolId::select('match_point_3')->find($rowStreak)->match_point_3;
+                    $symbolId = SymbolId::find($rowStreak);
 
+                    $points[] = [
+                        'symbol_id' => $symbolId->id,
+                        'points' => $symbolId->match_point_3,
+                        'combination' => 3
+                    ];
                     break;
                 }
 
@@ -301,7 +348,7 @@ class SlotMachine extends Component
         return [
             'rowStreaksOrders' => $rowStreaksOrders,
             'wins' => $rowStreaksWins,
-            'total_points' => $points
+            'points' => $points
         ];
     }
 }

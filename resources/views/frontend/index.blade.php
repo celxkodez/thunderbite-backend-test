@@ -97,10 +97,10 @@
             @csrf
 
             <label for="username">Username</label>
-            <input style="background-color: rgba(211,211,211,0.37)" type="text" readonly id="username" value="{{request('a')}}" name="account" placeholder="Username">
+            <input style="background-color: rgba(211,211,211,0.37)" type="text" id="username" value="{{request('a')}}" name="account" placeholder="Username">
 
             <label for="spin">Numbers of Spin</label>
-            <input type="number" style="background-color: rgba(211,211,211,0.37)" readonly id="spin" value="{{request('spin')}}" name="spin" placeholder="Numbers of Spin">
+            <input type="number" style="background-color: rgba(211,211,211,0.37)" id="spin" value="{{request('spin')}}" name="spin" placeholder="Numbers of Spin">
 
             <label for="start-date">Start Date</label>
             <input type="date" id="start-date" name="start_date" placeholder="1/1/1999">
